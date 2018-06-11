@@ -5,6 +5,7 @@ from .system_menu.system_menu import system_menu
 from .library.buttons import library_buttons
 from .book.buttons import book_buttons
 from .go_to_page.buttons import go_to_page_buttons
+from .go_to_print_page.buttons import go_to_print_page_buttons
 from .bookmarks.buttons import bookmarks_buttons
 
 
@@ -15,6 +16,7 @@ bindings = {
     'library': library_buttons,
     'book': book_buttons,
     'go_to_page': go_to_page_buttons,
+    'go_to_print_page': go_to_print_page_buttons,
     'bookmarks_menu': bookmarks_buttons,
     'help_menu': {
         'single': {

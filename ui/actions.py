@@ -5,6 +5,7 @@ from . import utility
 from .library.reducers import LibraryReducers
 from .book.reducers import BookReducers
 from .go_to_page.reducers import GoToPageReducers
+from .go_to_print_page.reducers import GoToPrintPageReducers
 from .bookmarks.reducers import BookmarksReducers
 
 
@@ -50,6 +51,7 @@ class AppReducers():
         return state.copy(location='book',
                           bookmarks_menu=bookmarks_menu.copy(page=0),
                           home_menu_visible=False, go_to_page_selection='',
+                          go_to_page_print_selection='',
                           help_menu=frozendict({'visible': False, 'page': 0}),
                           user=state['user'].copy(books=FrozenOrderedDict(changed_books)))
 
@@ -95,6 +97,19 @@ class AppReducers():
                 page = max_pages - 1
 
             return state.copy(help_menu=state['help_menu'].copy(page=page))
+        return state
+
+    def go_to_print_page(self, state, page):
+        width, height = utility.dimensions(state)
+
+        if page < 0:
+            page = 0
+
+        if state['help_menu']['visible']:
+            location = 'help_menu'
+        else:
+            location = state['location']
+
         return state
 
     def skip_pages(self, state, value):
@@ -165,6 +180,7 @@ action_types = utility.get_methods(AppReducers)
 action_types.extend(utility.get_methods(LibraryReducers))
 action_types.extend(utility.get_methods(BookReducers))
 action_types.extend(utility.get_methods(GoToPageReducers))
+action_types.extend(utility.get_methods(GoToPrintPageReducers))
 action_types.extend(utility.get_methods(HardwareReducers))
 action_types.extend(utility.get_methods(BookmarksReducers))
 

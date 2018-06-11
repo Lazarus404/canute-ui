@@ -4,6 +4,7 @@ from .actions import AppReducers, HardwareReducers
 from .library.reducers import LibraryReducers
 from .book.reducers import BookReducers
 from .go_to_page.reducers import GoToPageReducers
+from .go_to_print_page.reducers import GoToPrintPageReducers
 from .bookmarks.reducers import BookmarksReducers
 from .initial_state import initial_state
 
@@ -39,7 +40,7 @@ def makeReducer(key, clss):
 combined = aioredux.combine_reducers({
     'app': makeReducer('app', [AppReducers, LibraryReducers,
                                BookReducers, GoToPageReducers,
-                               BookmarksReducers]),
+                               GoToPrintPageReducers, BookmarksReducers]),
     'hardware': makeReducer('hardware', [HardwareReducers]),
 })
 

@@ -37,6 +37,10 @@ initial_state = utility.freeze({
             'selection': '',
             'keys_pressed': '',
         },
+        'go_to_print_page': {
+            'selection': '',
+            'keys_pressed': '',
+        },
         'help_menu': {
             'visible': False,
             'page': 0,
