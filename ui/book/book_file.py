@@ -14,10 +14,10 @@ class LoadState(Enum):
 
 
 BookData = namedtuple('BookData', ['filename', 'width', 'height',
-                                   'page_number', 'bookmarks',
+                                   'page_number', 'print_page_numbers', 'bookmarks',
                                    'file_contents', 'pages', 'load_state'])
 BookData.__new__.__defaults__ = (None, None, None,
-                                 0, tuple([0]),
+                                 0, tuple(), tuple([0]),
                                  None, tuple(), LoadState.INITIAL)
 
 

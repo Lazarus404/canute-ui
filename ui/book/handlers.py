@@ -5,6 +5,8 @@ import re
 import xml.etree.ElementTree as ElementTree
 import concurrent.futures
 
+from pprint import pprint
+
 from ..actions import actions
 from ..manual import manual
 from .. import braille
@@ -13,6 +15,8 @@ from . import book_file
 log = logging.getLogger(__name__)
 
 FORM_FEED = re.compile('\f')
+UK_PRINT_PAGE_NUMBER = re.compile(' {12}"(\d+)#')
+US_PRINT_PAGE_NUMBER = re.compile(' {24}#(\d+)')
 
 
 async def init(book):
@@ -38,6 +42,7 @@ def read_pages(book):
         return book
     log.debug('reading pages {}'.format(book.filename))
     pages = []
+    print_nums = []
     if book.ext == '.brf':
         page = []
         for line in book.file_contents.splitlines():
@@ -51,6 +56,10 @@ def read_pages(book):
                     line = line.replace('\f', '')
             if len(page) == book.height:
                 pages.append(tuple(page))
+                # check page for printed num
+                print_num = get_page_num(page)
+                if print_num != None:
+                    print_nums[len(pages)] = tuple(print_num)
                 page = []
             page.append(braille.from_ascii(line))
         if len(page) > 0:
@@ -58,6 +67,10 @@ def read_pages(book):
             while len(page) < book.height:
                 page.append(tuple())
             pages.append(tuple(page))
+            # check last page for printed num
+            print_num = get_page_num(page)
+            if print_num != None:
+                print_nums[len(pages)] = tuple(print_num)
     elif book.ext == '.pef':
         xml_doc = ElementTree.fromstring(book.file_contents)
         xml_pages = xml_doc.findall('.//pef:page', NS)
@@ -71,7 +84,12 @@ def read_pages(book):
             # pad up to the end
             while len(page) < book.height:
                 page.append(tuple())
+
             pages.append(tuple(page))
+            # check page for printed num
+            print_num = get_page_num(page)
+            if print_num != None:
+                print_nums[len(pages)] = tuple(print_num)
     else:
         raise BookFileError(
             'Unexpected extension: {}'.format(book.ext))
@@ -80,6 +98,7 @@ def read_pages(book):
         # add an end-of-book bookmark
         bookmarks += (len(pages) - 1,)
     return book._replace(pages=tuple(pages),
+                         print_page_numbers=tuple(print_nums),
                          load_state=book_file.LoadState.DONE,
                          bookmarks=bookmarks)
 
@@ -149,6 +168,14 @@ async def fully_load_books(store):
             else:
                 log.info('loading books done')
 
+def get_page_num(page):
+    # UK_PRINT_PAGE_NUMBER.search(page)
+    # if _:
+    #     return int(_.group(1))
+    # US_PRINT_PAGE_NUMBER.search(page)
+    # if _:
+    #     return int(_.group(1))
+    return None
 
 def stop_process_pool(executor):
     for pid, process in executor._processes.items():
